@@ -108,7 +108,9 @@ class LoanComponent
             return $loan->getContractID();
         });
 
-        $this->loanRepository->remove($loanContractID);
+        if ($loanContractID->count() > 0) {
+            $this->loanRepository->remove($loanContractID);
+        }
         return $loan;
     }
 }

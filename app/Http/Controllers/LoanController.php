@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Component\LoanComponent;
 use App\Component\PaymentComponent;
+use App\Http\Requests\LoanRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -59,7 +60,7 @@ class LoanController extends Controller
         }
     }
 
-    public function approveLoan(Request $request)
+    public function approveLoan(LoanRequest $request)
     {
 
         try {
@@ -83,7 +84,7 @@ class LoanController extends Controller
     }
 
 
-    public function transferLoan(Request $request)
+    public function transferLoan(LoanRequest $request)
     {
 
         try {
@@ -107,7 +108,7 @@ class LoanController extends Controller
     }
 
 
-    public function rejectLoan(Request $request)
+    public function rejectLoan(LoanRequest $request)
     {
 
         try {
@@ -130,7 +131,7 @@ class LoanController extends Controller
         }
     }
 
-    public function addPayment(Request $request)
+    public function addPayment(LoanRequest $request)
     {
         try {
             $this->paymentComponent->paymentContract(

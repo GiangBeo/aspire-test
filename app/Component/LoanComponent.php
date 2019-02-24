@@ -45,7 +45,7 @@ class LoanComponent
         });
 
         if ($loanContractID->count() > 0) {
-            throw new \Exception("You have contract not yet to complete");
+            throw new \Exception(trans("loan.exist_loan_not_complete"));
         }
 
         $contractID = uniqid();
@@ -83,7 +83,7 @@ class LoanComponent
         $loan = $this->loanRepository->findLoan($contractID, $userID);
 
         if (!$loan->canApprove()) {
-            throw new \Exception("This contract can not approve any more");
+            throw new \Exception(trans("loan.can_not_approve"));
         }
 
         $loan = $loan->setStatus(Loan::STATUS_APPROVE)->setFromDate(Carbon::now());
@@ -114,6 +114,27 @@ class LoanComponent
         if ($loanContractID->count() > 0) {
             $this->loanRepository->remove($loanContractID);
         }
+        return $loan;
+    }
+
+
+    /**
+     * @param int $userID
+     * @param string $contractID
+     * @return Loan
+     * @throws \Exception
+     */
+    public function transferLoan(int $userID, string $contractID): Loan
+    {
+
+        $loan = $this->loanRepository->findLoan($contractID, $userID);
+
+        if (!$loan->canTransfer()) {
+            throw new \Exception(trans("loan.can_not_transfer"));
+        }
+
+        $loan = $loan->setStatus(Loan::STATUS_TRANSFER);
+        $this->loanRepository->update($loan);
         return $loan;
     }
 }

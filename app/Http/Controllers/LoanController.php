@@ -83,6 +83,31 @@ class LoanController extends Controller
         }
     }
 
+
+    public function transferLoan(Request $request)
+    {
+
+        try {
+            $loan = $this->loanComponent->transferLoan(
+                $request->user()->id,
+                $request->input("contract_id")
+            );
+
+            return response()->json(
+                [
+                    'error' => "",
+                    'status_code' => 200,
+                    'data' => $loan->toArray()
+                ], JsonResponse::HTTP_UNPROCESSABLE_ENTITY);
+        } catch (\Exception $exception) {
+            throw new HttpResponseException(response()->json(
+                [
+                    'error' => $exception->getMessage(),
+                    'status_code' => 422,
+                ], JsonResponse::HTTP_UNPROCESSABLE_ENTITY));
+        }
+    }
+
     public function addPayment(Request $request)
     {
 

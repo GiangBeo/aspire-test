@@ -249,6 +249,13 @@ class Loan
     /**
      * @return bool
      */
+    public function canTransfer() : bool {
+        return $this->status == self::STATUS_APPROVE;
+    }
+
+    /**
+     * @return bool
+     */
     public function isComplete() : bool {
         return $this->getStatus() == Loan::STATUS_COMPLETE;
     }

@@ -7,8 +7,6 @@ use App\Domain\Loan\LoanRepository;
 use App\Domain\Payment\Log\Log;
 use App\Domain\Payment\Log\LogFactory;
 use App\Domain\Payment\Log\LogRepository;
-use App\Domain\User\UserFactory;
-use App\Domain\User\UserRepository;
 
 class PaymentComponent
 {
@@ -52,7 +50,7 @@ class PaymentComponent
         $loan = $this->loanRepository->findLoan($contractID, $userID);
 
         if ($loan->isComplete()){
-            throw new \Exception("Loan is complete, you can not make payment");
+            throw new \Exception(trans("loan.can_not_payment"));
         }
 
         $payment = $this->logFactory->make($contractID, $total, $source);

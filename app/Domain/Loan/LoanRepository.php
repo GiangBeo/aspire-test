@@ -3,7 +3,6 @@
 namespace App\Domain\Loan;
 
 use Illuminate\Support\Collection;
-use mysql_xdevapi\Exception;
 
 class LoanRepository
 {

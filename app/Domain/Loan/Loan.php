@@ -12,6 +12,7 @@ class Loan
     const STATUS_APPROVE = 1;
     const STATUS_TRANSFER = 2;
     const STATUS_COMPLETE = 3;
+    const STATUS_REJECT = 4;
 
     /**
      * @var string
@@ -243,7 +244,15 @@ class Loan
      * @return bool
      */
     public function canApprove() : bool {
-        return !in_array($this->status, array(self::STATUS_APPROVE, self::STATUS_TRANSFER, self::STATUS_COMPLETE));
+        return !in_array(
+            $this->status,
+            array(
+                self::STATUS_REJECT,
+                self::STATUS_APPROVE,
+                self::STATUS_TRANSFER,
+                self::STATUS_COMPLETE
+            )
+        );
     }
 
     /**
@@ -258,6 +267,20 @@ class Loan
      */
     public function isComplete() : bool {
         return $this->getStatus() == Loan::STATUS_COMPLETE;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isTransfer() : bool {
+        return $this->status == self::STATUS_TRANSFER;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isPending() : bool {
+        return $this->status == self::STATUS_PENDING;
     }
 
     /**

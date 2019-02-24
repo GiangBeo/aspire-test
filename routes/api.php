@@ -16,9 +16,5 @@ use Illuminate\Http\Request;
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
-
 Route::middleware('auth:api')->post('/create-loan', 'LoanController@createLoan');
-Route::middleware('auth:api')->post('/approve-loan', 'LoanController@approveLoan');
-Route::middleware('auth:api')->post('/repayment-loan', 'LoanController@addPayment');
-Route::middleware('auth:api')->post('/transfer-loan', 'LoanController@transferLoan');
 

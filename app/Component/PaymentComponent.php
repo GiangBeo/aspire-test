@@ -39,17 +39,16 @@ class PaymentComponent
 
     /**
      * @param string $contractID
-     * @param int $userID
      * @param string $source
      * @param int $total
      * @return int
      * @throws \Exception
      */
-    public function paymentContract(string $contractID, int $userID, string $source, int $total) : int
+    public function paymentContract(string $contractID, string $source, int $total): int
     {
-        $loan = $this->loanRepository->findLoan($contractID, $userID);
+        $loan = $this->loanRepository->findLoanByContractID($contractID);
 
-        if ($loan->isComplete()){
+        if ($loan->isComplete() || !$loan->isTransfer()) {
             throw new \Exception(trans("loan.can_not_payment"));
         }
 
@@ -58,11 +57,11 @@ class PaymentComponent
         $this->logRepository->create($payment);
 
         $listLogs = $this->logRepository->findLogByContractID($contractID);
-        $totalPayment = $listLogs->sum(function(Log $log){
+        $totalPayment = $listLogs->sum(function (Log $log) {
             return $log->getTotal();
         });
 
-        if($totalPayment >= $loan->getPaymentFrequency() * $loan->getDurations()){
+        if ($totalPayment >= $loan->getPaymentFrequency() * $loan->getDurations()) {
             $loan = $loan->setStatus(Loan::STATUS_COMPLETE);
             $this->loanRepository->update($loan);
         }

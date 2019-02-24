@@ -59,6 +59,22 @@ class LoanRepository
         return $this->loanFactory->makeByEloquent($loan);
     }
 
+
+    /**
+     * @param  string $contractID
+     * @return Loan
+     */
+    public function findLoanByContractID(string $contractID): Loan
+    {
+        $loan = \App\Loan::query()->where('contract_id', $contractID)->first();
+
+        if (is_null($loan)) {
+            new \Exception("Contract not found");
+        }
+
+        return $this->loanFactory->makeByEloquent($loan);
+    }
+
     /**
      * @param  Loan $loan
      * @return int

@@ -54,7 +54,7 @@ class LoanController extends Controller
                 [
                     'error' => $exception->getMessage(),
                     'status_code' => 422,
-                    'data' =>[]
+                    'data' => []
                 ], JsonResponse::HTTP_UNPROCESSABLE_ENTITY));
         }
     }
@@ -64,7 +64,6 @@ class LoanController extends Controller
 
         try {
             $loan = $this->loanComponent->approveLoan(
-                $request->user()->id,
                 $request->input("contract_id")
             );
 
@@ -89,7 +88,30 @@ class LoanController extends Controller
 
         try {
             $loan = $this->loanComponent->transferLoan(
-                $request->user()->id,
+                $request->input("contract_id")
+            );
+
+            return response()->json(
+                [
+                    'error' => "",
+                    'status_code' => 200,
+                    'data' => $loan->toArray()
+                ], JsonResponse::HTTP_UNPROCESSABLE_ENTITY);
+        } catch (\Exception $exception) {
+            throw new HttpResponseException(response()->json(
+                [
+                    'error' => $exception->getMessage(),
+                    'status_code' => 422,
+                ], JsonResponse::HTTP_UNPROCESSABLE_ENTITY));
+        }
+    }
+
+
+    public function rejectLoan(Request $request)
+    {
+
+        try {
+            $loan = $this->loanComponent->rejectLoan(
                 $request->input("contract_id")
             );
 
@@ -110,11 +132,9 @@ class LoanController extends Controller
 
     public function addPayment(Request $request)
     {
-
         try {
-           $this->paymentComponent->paymentContract(
+            $this->paymentComponent->paymentContract(
                 $request->input("contract_id"),
-                $request->user()->id,
                 $request->input("source"),
                 $request->input("total")
             );

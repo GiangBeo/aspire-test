@@ -72,15 +72,14 @@ class LoanComponent
 
 
     /**
-     * @param int $userID
      * @param string $contractID
      * @return Loan
      * @throws \Exception
      */
-    public function approveLoan(int $userID, string $contractID): Loan
+    public function approveLoan(string $contractID): Loan
     {
 
-        $loan = $this->loanRepository->findLoan($contractID, $userID);
+        $loan = $this->loanRepository->findLoanByContractID($contractID);
 
         if (!$loan->canApprove()) {
             throw new \Exception(trans("loan.can_not_approve"));
@@ -103,7 +102,7 @@ class LoanComponent
 
         $this->loanRepository->update($loan);
 
-        $listLoan = $this->loanRepository->findLoanByUser($userID);
+        $listLoan = $this->loanRepository->findLoanByUser($loan->getUserID());
 
         $loanContractID = $listLoan->filter(function (Loan $loan) {
             return $loan->getStatus() == Loan::STATUS_PENDING;
@@ -119,21 +118,40 @@ class LoanComponent
 
 
     /**
-     * @param int $userID
      * @param string $contractID
      * @return Loan
      * @throws \Exception
      */
-    public function transferLoan(int $userID, string $contractID): Loan
+    public function transferLoan(string $contractID): Loan
     {
 
-        $loan = $this->loanRepository->findLoan($contractID, $userID);
+        $loan = $this->loanRepository->findLoanByContractID($contractID);
 
         if (!$loan->canTransfer()) {
             throw new \Exception(trans("loan.can_not_transfer"));
         }
 
         $loan = $loan->setStatus(Loan::STATUS_TRANSFER);
+        $this->loanRepository->update($loan);
+        return $loan;
+    }
+
+
+    /**
+     * @param string $contractID
+     * @return Loan
+     * @throws \Exception
+     */
+    public function rejectLoan(string $contractID): Loan
+    {
+
+        $loan = $this->loanRepository->findLoanByContractID($contractID);
+
+        if (!$loan->isPending()) {
+            throw new \Exception(trans("loan.can_not_reject"));
+        }
+
+        $loan = $loan->setStatus(Loan::STATUS_REJECT);
         $this->loanRepository->update($loan);
         return $loan;
     }

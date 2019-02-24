@@ -40,11 +40,11 @@ class LoanComponent
     public function createLoan(int $userID, int $total, int $durations, int $repaymentFrequency): Loan
     {
         $listLoan = $this->loanRepository->findLoanByUser($userID);
-        $loanContractID = $listLoan->filter(function(Loan $loan){
+        $loanContractID = $listLoan->filter(function (Loan $loan) {
             return in_array($loan->getStatus(), array(Loan::STATUS_APPROVE, Loan::STATUS_TRANSFER));
         });
 
-        if ($loanContractID->count() > 0){
+        if ($loanContractID->count() > 0) {
             throw new \Exception("You have contract not yet to complete");
         }
 
@@ -82,29 +82,32 @@ class LoanComponent
 
         $loan = $this->loanRepository->findLoan($contractID, $userID);
 
-        if ($loan->canApprove()) {
-            $loan = $loan->setStatus(Loan::STATUS_APPROVE)->setFromDate(Carbon::now());
-
-            switch ($loan->getRepaymentFrequency()) {
-                case Loan::MONTH :
-                    {
-                        $loan = $loan->setToDate(Carbon::now()->addMonth($loan->getDurations()));
-                        break;
-                    }
-                case Loan::YEAR :
-                    {
-                        $loan = $loan->setToDate(Carbon::now()->addYear($loan->getDurations()));
-                        break;
-                    }
-            }
+        if (!$loan->canApprove()) {
+            throw new \Exception("This contract can not approve any more");
         }
+
+        $loan = $loan->setStatus(Loan::STATUS_APPROVE)->setFromDate(Carbon::now());
+
+        switch ($loan->getRepaymentFrequency()) {
+            case Loan::MONTH :
+                {
+                    $loan = $loan->setToDate(Carbon::now()->addMonth($loan->getDurations()));
+                    break;
+                }
+            case Loan::YEAR :
+                {
+                    $loan = $loan->setToDate(Carbon::now()->addYear($loan->getDurations()));
+                    break;
+                }
+        }
+
         $this->loanRepository->update($loan);
 
         $listLoan = $this->loanRepository->findLoanByUser($userID);
 
-        $loanContractID = $listLoan->filter(function(Loan $loan){
+        $loanContractID = $listLoan->filter(function (Loan $loan) {
             return $loan->getStatus() == Loan::STATUS_PENDING;
-        })->map(function(Loan $loan){
+        })->map(function (Loan $loan) {
             return $loan->getContractID();
         });
 

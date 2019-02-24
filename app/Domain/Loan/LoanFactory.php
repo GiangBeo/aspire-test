@@ -20,8 +20,13 @@ class LoanFactory
         $status
     ): Loan
     {
-        $from_date = Carbon::createFromFormat("Y-m-d H:i:s", $from_date);
-        $to_date = Carbon::createFromFormat("Y-m-d H:i:s", $to_date);
+        if(!is_null($from_date)){
+            $from_date = Carbon::createFromFormat("Y-m-d H:i:s", $from_date);
+        }
+        if(!is_null($to_date)){
+            $to_date = Carbon::createFromFormat("Y-m-d H:i:s", $to_date);
+        }
+
         return new Loan(
             $contractID,
             $durations,

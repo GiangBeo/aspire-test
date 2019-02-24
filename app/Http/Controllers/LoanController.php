@@ -54,6 +54,7 @@ class LoanController extends Controller
                 [
                     'error' => $exception->getMessage(),
                     'status_code' => 422,
+                    'data' =>[]
                 ], JsonResponse::HTTP_UNPROCESSABLE_ENTITY));
         }
     }

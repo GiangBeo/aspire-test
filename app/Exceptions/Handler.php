@@ -51,7 +51,7 @@ class Handler extends ExceptionHandler
         if(app()->isLocal()){
             return parent::render($request, $exception);
         }
-        
+
         return response()->json(
             [
                 'error' => $exception->getMessage(),
